@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MovieLens 1M — Mining Movie Genre & Rating Patterns. A Data Mining Techniques portfolio exploring audience behavior, Apriori association rules, PCA dimensionality reduction, and demographic cross-tabulation.">
+  <title>MovieLens 1M | Data Mining Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+
+<!-- Mobile Header -->
+<div class="mobile-header">
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">☰</button>
+  <span class="mobile-brand">MovieLens 1M</span>
+  <button class="hamburger" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+</div>
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<div class="app-layout">
+  <!-- ============================================================ -->
+  <!-- SIDEBAR -->
+  <!-- ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">
+        <span class="sidebar-logo-icon">ML</span>
+        <span class="sidebar-logo-text">MovieLens 1M</span>
+      </div>
+      <div class="sidebar-tagline">Mining Movie Genre & Rating Patterns</div>
+    </div>
+
+    <div class="sidebar-stats" id="sidebar-stats">
+      <div class="sidebar-stats-title">Repository Status</div>
+      <div class="sidebar-stat-row">
+        <span class="sidebar-stat-label">Total Ratings:</span>
+        <span class="sidebar-stat-value" id="sidebar-ratings">—</span>
+      </div>
+      <div class="sidebar-stat-row">
+        <span class="sidebar-stat-label">Users:</span>
+        <span class="sidebar-stat-value" id="sidebar-users">—</span>
+      </div>
+      <div class="sidebar-stat-row">
+        <span class="sidebar-stat-label">Catalog Movies:</span>
+        <span class="sidebar-stat-value" id="sidebar-movies">—</span>
+      </div>
+      <div class="sidebar-stat-row">
+        <span class="sidebar-stat-label">Distinct Genres:</span>
+        <span class="sidebar-stat-value" id="sidebar-genres">—</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Dashboard</div>
+      <button class="nav-item active" data-page="overview">
+        <span class="nav-icon">📊</span> Overview
+      </button>
+      <button class="nav-item" data-page="dataset">
+        <span class="nav-icon">🗃️</span> Dataset & Schema
+      </button>
+      <button class="nav-item" data-page="exploration">
+        <span class="nav-icon">📈</span> Exploration (EDA)
+      </button>
+
+      <div class="nav-section-label">Mining Models</div>
+      <button class="nav-item" data-page="association">
+        <span class="nav-icon">🔗</span> Association Rules
+      </button>
+      <button class="nav-item" data-page="pca">
+        <span class="nav-icon">🧬</span> PCA Projection
+      </button>
+      <button class="nav-item" data-page="age-genre">
+        <span class="nav-icon">👥</span> Age & Genre
+      </button>
+
+      <div class="nav-section-label">Synthesis & Docs</div>
+      <button class="nav-item" data-page="findings">
+        <span class="nav-icon">💡</span> Key Findings
+      </button>
+      <button class="nav-item" data-page="methodology">
+        <span class="nav-icon">⚙️</span> Methodology
+      </button>
+      <button class="nav-item" data-page="about">
+        <span class="nav-icon">ℹ️</span> About Project
+      </button>
+    </nav>
+
+    <div class="theme-toggle-wrapper">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-label">Dark Mode</span>
+        <div class="toggle-track"><div class="toggle-thumb"></div></div>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-brand">MovieLens 1M Analytics Suite</div>
+      <div>Data Mining Techniques (DMT)</div>
+      <div style="margin-top:4px;">GroupLens Research © 2000</div>
+    </div>
+  </aside>
+
+  <!-- ============================================================ -->
+  <!-- MAIN CONTENT -->
+  <!-- ============================================================ -->
+  <main class="main-content" id="main-content">
+
+    <!-- ============================================================ -->
+    <!-- PAGE: OVERVIEW -->
+    <!-- ============================================================ -->
+    <div class="page active" id="page-overview">
+      <div class="flex-wrap gap-1 mb-2">
+        <span class="badge badge-emerald">DMT PORTFOLIO</span>
+        <span class="badge">GROUPLENS 1M BENCHMARK</span>
+        <span class="badge badge-amber">ACADEMIC RESEARCH</span>
+      </div>
+      <h1 class="hero-title">MovieLens 1M — Mining Movie Genre & Rating Patterns</h1>
+      <p class="hero-subtitle">
+        An empirical data mining portfolio exploring audience behavior, commercial volume versus critical acclaim,
+        combinatorial genre pairs, Apriori frequent itemset rules, and unsupervised latent taste segments using PCA.
+      </p>
+
+      <div class="kpi-grid" id="overview-kpis"></div>
+
+      <div class="grid-2">
+        <div class="chart-container">
+          <div id="chart-rating-dist"></div>
+        </div>
+        <div class="chart-container">
+          <div id="chart-top-genres"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Core Empirical Discoveries at a Glance</div>
+        <div class="card-subtitle">Verified findings extracted directly from DMT.ipynb data mining execution</div>
+        <div class="grid-auto" id="overview-discoveries"></div>
+      </div>
+
+      <div class="card" style="background: rgba(79, 70, 229, 0.04); border-style: dashed; border-color: rgba(79, 70, 229, 0.3);">
+        <h4 class="text-brand mb-1">Explore the Analytical Portfolio</h4>
+        <p style="font-size: 0.9rem; margin-bottom: 12px;">Use the sidebar navigation to inspect individual research modules:</p>
+        <div class="flex-wrap gap-1">
+          <span class="badge">🗃️ Dataset & Schema</span>
+          <span class="badge">📊 Exploratory Analysis</span>
+          <span class="badge">🔗 Association Rules (Apriori)</span>
+          <span class="badge">🧬 PCA Projection</span>
+          <span class="badge">👥 Age & Genre Analysis</span>
+          <span class="badge">💡 Key Findings</span>
+          <span class="badge">⚙️ Methodology Pipeline</span>
+          <span class="badge">ℹ️ About Project & Scope</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: DATASET -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-dataset">
+      <h1>🗃️ Dataset Architecture & Schema</h1>
+      <p class="hero-subtitle">Comprehensive inspection of the raw GroupLens MovieLens 1M benchmark dataset, its relational schemas, demographic encodings, and preprocessing pipelines.</p>
+
+      <div class="kpi-grid" id="dataset-kpis"></div>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">Relational Entities & Parsing Specifications</h2>
+      </div>
+
+      <div class="card mb-2">
+        <div class="card-title">Original MovieLens 1M File Specifications</div>
+        <div class="card-subtitle">Extracted directly from README and DMT.ipynb preprocessing pipeline</div>
+        <p>The raw dataset utilizes double-colon delimiters (<code>::</code>) and <code>latin-1</code> character encoding to support international movie titles.</p>
+      </div>
+
+      <div class="grid-3" id="dataset-file-cards">
+        <div class="card">
+          <div style="font-weight:700; color:var(--brand-primary); margin-bottom:8px;">🎬 movies.dat</div>
+          <div style="font-size:0.85rem; line-height:1.7;">
+            <b>Format:</b> <code>MovieID::Title::Genres</code><br>
+            <b>Records:</b> 3,883 movies<br>
+            <b>Title:</b> Movie title with year of release in parentheses<br>
+            <b>Genres:</b> Pipe-delimited multi-label string (e.g. <code>Animation|Children's|Comedy</code>)
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700; color:var(--brand-accent); margin-bottom:8px;">⭐ ratings.dat</div>
+          <div style="font-size:0.85rem; line-height:1.7;">
+            <b>Format:</b> <code>UserID::MovieID::Rating::Timestamp</code><br>
+            <b>Records:</b> 1,000,209 ratings<br>
+            <b>Scale:</b> 1 to 5 whole stars<br>
+            <b>User Density:</b> Every user has at least 20 ratings<br>
+            <b>Timestamp:</b> Epoch seconds from Unix time
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700; color:var(--color-emerald); margin-bottom:8px;">👤 users.dat</div>
+          <div style="font-size:0.85rem; line-height:1.7;">
+            <b>Format:</b> <code>UserID::Gender::Age::Occupation::Zip-code</code><br>
+            <b>Records:</b> 6,040 demographic profiles<br>
+            <b>Gender:</b> 'M' (Male) or 'F' (Female)<br>
+            <b>Age:</b> 7 demographic brackets<br>
+            <b>Occupation:</b> 21 standard codes (0 to 20)
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Interactive Table Explorer</h2>
+      </div>
+
+      <div class="card">
+        <div class="flex-wrap gap-1 mb-2">
+          <button class="badge" style="cursor:pointer;" onclick="showDataTab('ratings')" id="tab-ratings">⭐ Ratings Data</button>
+          <button class="badge" style="cursor:pointer;" onclick="showDataTab('movies')" id="tab-movies">🎬 Movies Data</button>
+          <button class="badge" style="cursor:pointer;" onclick="showDataTab('users')" id="tab-users">👤 Users Data</button>
+          <button class="badge" style="cursor:pointer;" onclick="showDataTab('preprocessing')" id="tab-preprocessing">🔄 Preprocessing</button>
+        </div>
+        <div id="data-tab-content"></div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">3</span>
+        <h2 class="mb-0">Demographic Distribution Overview</h2>
+      </div>
+
+      <div class="grid-2">
+        <div class="chart-container"><div id="chart-age-dist"></div></div>
+        <div class="chart-container"><div id="chart-gender-dist"></div></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: EXPLORATION (EDA) -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-exploration">
+      <h1>📊 Exploratory Data Mining Analysis</h1>
+      <p class="hero-subtitle">Empirical exploratory analysis revealing rating distributions, volume by genre, quality benchmarks, 5-star concentrations, and co-occurring genre pair dynamics.</p>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">Global Rating Distribution & Skewness</h2>
+      </div>
+      <div class="chart-takeaway-layout">
+        <div class="chart-container"><div id="chart-eda-rating-dist"></div></div>
+        <div class="takeaway" id="eda-rating-takeaway"></div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Genre Volume vs Quality Disparity</h2>
+      </div>
+      <div class="grid-2">
+        <div class="chart-container"><div id="chart-genre-volume"></div></div>
+        <div class="chart-container"><div id="chart-genre-quality"></div></div>
+      </div>
+      <div class="card" id="eda-volume-vs-quality-card"></div>
+
+      <div class="section-header">
+        <span class="section-number">3</span>
+        <h2 class="mb-0">5-Star Rating Concentration & Generational Leniency</h2>
+      </div>
+      <div class="grid-2">
+        <div class="chart-container"><div id="chart-five-star"></div></div>
+        <div class="chart-container"><div id="chart-age-avg-rating"></div></div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">4</span>
+        <h2 class="mb-0">Co-occurring Genre Pairs & Synergies</h2>
+      </div>
+      <div class="grid-2">
+        <div class="chart-container"><div id="chart-common-pairs"></div></div>
+        <div class="chart-container"><div id="chart-reliable-pairs"></div></div>
+      </div>
+      <div class="takeaway" id="eda-pairs-takeaway"></div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: ASSOCIATION RULES -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-association">
+      <h1>🔗 Association Rule Mining (Apriori)</h1>
+      <p class="hero-subtitle">Frequent itemset discovery and association rule mining on movie genre metadata using the classic Apriori algorithm.</p>
+
+      <div class="info-box">
+        <span class="info-box-icon">📌</span>
+        <div><strong>Methodological Clarification:</strong> The association rules shown below capture <strong>genre co-occurrence within movie metadata</strong>
+        (i.e., when a movie is tagged with Genre A, what is the probability it is also tagged with Genre B).
+        These rules represent <strong>genre associations</strong>, NOT a collaborative user recommendation system.</div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">Mining Parameter Configuration</h2>
+      </div>
+      <div class="card">
+        <div style="font-size:0.85rem; line-height:1.6; border-left:3px solid var(--brand-secondary); padding:8px 14px;">
+          <b>Baseline DMT.ipynb Parameters:</b><br>
+          <code>min_support = 0.02 (2.0%)</code><br>
+          <code>min_confidence = 0.30 (30.0%)</code><br>
+          <em>Top rule identified: Children's → Animation (Lift = 12.38)</em>
+        </div>
+      </div>
+
+      <div class="kpi-grid" id="rules-kpis"></div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Rule Evaluation & Lift Landscape</h2>
+      </div>
+      <div class="grid-2">
+        <div class="chart-container"><div id="chart-rules-scatter"></div></div>
+        <div class="chart-container"><div id="chart-rules-bar"></div></div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">3</span>
+        <h2 class="mb-0">Formal Association Mining Metrics</h2>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div style="font-weight:700; color:var(--brand-primary); margin-bottom:8px;">1. Support (P(A ∩ B))</div>
+          <div style="font-size:0.875rem; line-height:1.6;">
+            Proportion of movies in the catalog containing both genre A and genre B.<br><br>
+            <code>Support(A → B) = Count(A ∪ B) / Total Movies</code><br><br>
+            Indicates the statistical significance and frequency of the co-occurrence.
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700; color:var(--brand-accent); margin-bottom:8px;">2. Confidence (P(B | A))</div>
+          <div style="font-size:0.875rem; line-height:1.6;">
+            Conditional probability that a movie has genre B given that it is tagged with genre A.<br><br>
+            <code>Confidence(A → B) = Support(A ∪ B) / Support(A)</code><br><br>
+            Reflects directional predictive reliability.
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700; color:var(--color-emerald); margin-bottom:8px;">3. Lift (Ratio of Dependence)</div>
+          <div style="font-size:0.875rem; line-height:1.6;">
+            Measures how much more often A and B occur together than expected if independent.<br><br>
+            <code>Lift(A → B) = Confidence(A → B) / Support(B)</code><br><br>
+            <b>Lift > 1:</b> Positive association.<br>
+            <b>Lift = 1:</b> Independent occurrence.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">4</span>
+        <h2 class="mb-0">Complete Mined Association Rules Table</h2>
+      </div>
+      <div class="data-table-wrapper" id="rules-table-wrapper"></div>
+
+      <div class="takeaway">
+        <div class="takeaway-header">Key Mining Discovery</div>
+        <div class="takeaway-text">
+          The strongest mutual association in the entire dataset is between <b>Children's</b> and <b>Animation</b>:
+          An antecedent of <em>Children's</em> yields <em>Animation</em> with a massive <b>Lift of 12.38</b> and <b>Confidence of 83.2%</b>.
+          Conversely, <em>Animation</em> implies <em>Children's</em> with the exact same Lift of <b>12.38</b> and a Confidence of <b>64.4%</b>.
+          This demonstrates near-complete industrial coupling of animated feature films with family and children's content during this era.
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: PCA -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-pca">
+      <h1>🧬 Principal Component Analysis (PCA)</h1>
+      <p class="hero-subtitle">Unsupervised dimensionality reduction projecting 6,040 user taste vectors across 18 genre dimensions into a 2D preference segment map.</p>
+
+      <div class="kpi-grid" id="pca-kpis"></div>
+
+      <div class="card">
+        <div class="card-title">Mathematical Formulation of the User-Genre Preference Matrix</div>
+        <div class="card-subtitle">How high-dimensional viewing behaviors were reduced into latent components</div>
+        <div style="font-size:0.925rem; line-height:1.65;">
+          1. <b>Feature Matrix Construction:</b> Aggregated 1,000,209 ratings into a <code>6,040 × 18</code> matrix where each cell represents user <em>u</em>'s average rating for genre <em>g</em> (unrated genres filled with 0).<br>
+          2. <b>Z-Score Standardization:</b> Standardized using <code>StandardScaler()</code> (zero mean, unit variance) to prevent high-volume genres from artificially dominating covariance.<br>
+          3. <b>Orthogonal Eigen-Decomposition:</b> Computed top 2 eigenvectors capturing maximum orthogonal variance across the user population.
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">Interactive 2D Movie Preference Segment Map</h2>
+      </div>
+      <div class="chart-takeaway-layout">
+        <div class="chart-container"><div id="chart-pca-scatter"></div></div>
+        <div class="takeaway" id="pca-interpretation"></div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Principal Component Loadings (Genre Dimensional Weights)</h2>
+      </div>
+      <div class="grid-2">
+        <div class="chart-container"><div id="chart-pc1-loadings"></div></div>
+        <div class="chart-container"><div id="chart-pc2-loadings"></div></div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: AGE & GENRE -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-age-genre">
+      <h1>👥 Age Cohort × Genre Interaction Patterns</h1>
+      <p class="hero-subtitle">Cross-tabulated mining of demographic age cohorts against movie genre consumption volumes, rating leniency, and highest-rated preferences.</p>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">Age Group × Genre Rating Heatmap</h2>
+      </div>
+      <div class="chart-takeaway-layout">
+        <div class="chart-container"><div id="chart-age-genre-heatmap"></div></div>
+        <div class="takeaway">
+          <div class="takeaway-header">Heatmap Observations</div>
+          <div class="takeaway-text">
+            <b>Universal Critical Consensus:</b><br>
+            • <b>Film-Noir</b> achieves top ratings across almost every demographic cohort, peaking at <b>4.19</b> in the 56+ bracket.<br><br>
+            • <b>Documentaries</b> show strong consistency (3.71 to 4.01), with older cohorts appreciating non-fiction more.<br><br>
+            • <b>Horror</b> consistently receives the lowest average ratings across all generations (3.11 in Under 18 to 3.26 in 56+).<br><br>
+            • <b>Animation</b> receives its highest average praise from viewers aged <b>Under 18 (3.70)</b> and <b>56+ (3.74)</b>.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Highest-Rated Genre by Age Bracket</h2>
+      </div>
+      <div class="grid-2">
+        <div class="data-table-wrapper" id="age-max-genre-table"></div>
+        <div class="card">
+          <div class="card-title">Consistent Peak Preference</div>
+          <div class="card-subtitle">Direct verification from DMT.ipynb</div>
+          <div style="font-size:0.9rem; line-height:1.6;">
+            Across virtually every generation—from young adults (18-24) to mature seniors (56+)—<b>Film-Noir</b> emerges as the undisputed highest-rated genre.
+            This demonstrates that while viewership is small, viewer satisfaction in classic stylized crime drama is exceptionally durable across decades of age difference.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">3</span>
+        <h2 class="mb-0">Most Watched Genres by Demographic Cohort</h2>
+      </div>
+      <div class="chart-container"><div id="chart-top-genres-by-age"></div></div>
+
+      <div class="takeaway">
+        <div class="takeaway-header">Key Demographic Finding</div>
+        <div class="takeaway-text">
+          Regardless of age bracket, <b>Comedy</b>, <b>Drama</b>, and <b>Action</b> invariably capture the top 3 spots in volume across every single demographic cohort.
+          The primary generational shifts occur in secondary genres: younger viewers (Under 18 and 18-24) exhibit elevated proportions of <b>Sci-Fi</b> and <b>Animation</b>,
+          whereas older viewers (45-49, 50-55, 56+) display significantly higher engagement in <b>Thriller</b>, <b>Romance</b>, and <b>War</b>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: KEY FINDINGS -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-findings">
+      <h1>💡 Empirical Data Mining Findings</h1>
+      <p class="hero-subtitle">Key conclusions, verified statistical benchmarks, and data mining discoveries derived strictly from DMT.ipynb and MovieLens 1M.</p>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">Official Project Benchmark Scorecard</h2>
+      </div>
+      <div class="data-table-wrapper" id="scorecard-table"></div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Detailed Mining Discoveries</h2>
+      </div>
+      <div class="grid-2" id="findings-cards"></div>
+
+      <div class="section-header">
+        <span class="section-number">3</span>
+        <h2 class="mb-0">Formal Project Conclusion</h2>
+      </div>
+      <div class="takeaway" style="padding:22px; font-size:0.95rem; line-height:1.75;">
+        <div class="takeaway-header" style="font-size:0.95rem;">DMT Synthesis Summary</div>
+        <div class="takeaway-text">
+          The MovieLens 1M dataset was systematically investigated using Data Mining Techniques.
+          By integrating exploratory profiling, combinatorial genre pairs, Apriori frequent itemset mining, and unsupervised PCA dimensionality reduction:
+          <ul style="margin: 8px 0 8px 20px;">
+            <li>Identified the universal positive rating skew and benchmarked the global average at 3.58.</li>
+            <li>Uncovered the contrast between mass commercial genres (Comedy/Drama) and elite niche acclaim (Film-Noir/Documentary).</li>
+            <li>Established quantitative co-occurrence rules with statistical lift up to 12.38x.</li>
+            <li>Demonstrated that user genre preferences reduce cleanly to 2 principal components distinguishing omnivorous breadth from visceral spectacle.</li>
+          </ul>
+          All analyses and metrics presented are verified against the raw dataset records and reproducible pipelines.
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: METHODOLOGY -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-methodology">
+      <h1>⚙️ Data Mining Methodology & Pipeline</h1>
+      <p class="hero-subtitle">End-to-end architectural workflow illustrating data ingestion, preprocessing transformations, mining algorithms, and validation stages.</p>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">End-to-End Analytical Pipeline</h2>
+      </div>
+      <div id="methodology-pipeline"></div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Formal Algorithm & Hyperparameter Specifications</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Apriori Association Rule Mining</div>
+          <div class="card-subtitle">Frequent itemset discovery in transactional movie genres</div>
+          <ul style="font-size:0.875rem; line-height:1.8;">
+            <li><b>Domain:</b> Movie catalog multi-genre combinations (3,883 transactions × 18 items).</li>
+            <li><b>Implementation:</b> <code>mlxtend.frequent_patterns.apriori</code> & <code>association_rules</code>.</li>
+            <li><b>Minimum Support (s):</b> <code>0.02</code> (at least 2.0% of all catalog movies).</li>
+            <li><b>Evaluation Metric:</b> Confidence (threshold ≥ <code>0.30</code>).</li>
+            <li><b>Ranking Criterion:</b> Lift factor (descending).</li>
+            <li><b>Verification:</b> Highest lift achieved: <code>12.38</code> for <em>Children's ↔ Animation</em>.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Principal Component Analysis (PCA)</div>
+          <div class="card-subtitle">Unsupervised dimensional decomposition of user preference space</div>
+          <ul style="font-size:0.875rem; line-height:1.8;">
+            <li><b>Input Matrix (X):</b> <code>6,040 users × 18 genres</code> rating matrix (unrated = 0).</li>
+            <li><b>Standardization:</b> <code>StandardScaler()</code> centering mean to 0 and variance to 1 per genre.</li>
+            <li><b>Decomposition:</b> <code>sklearn.decomposition.PCA(n_components=2)</code> via SVD.</li>
+            <li><b>Explained Variance:</b> PC1 = <b>26.8%</b>; PC2 = <b>11.8%</b> (Cumulative: <b>38.6%</b>).</li>
+            <li><b>Semantic Axes:</b> PC1 captures general engagement breadth; PC2 captures visceral spectacle vs character drama.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">3</span>
+        <h2 class="mb-0">Data Mining Integrity & Authenticity Statement</h2>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-header">Reproducibility Guarantee</div>
+        <div class="takeaway-text">
+          Every metric, table, chart, and statistical inference presented in this portfolio is calculated directly from the original GroupLens MovieLens 1M flat files (<code>ratings.dat</code>, <code>movies.dat</code>, <code>users.dat</code>).<br><br>
+          <b>No synthetic data, simulated machine learning predictions, mock recommendation engines, or fabricated accuracy scores were introduced.</b>
+          All analytical workflows adhere strictly to the experiments conducted in the reference notebook <code>DMT.ipynb</code>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: ABOUT -->
+    <!-- ============================================================ -->
+    <div class="page" id="page-about">
+      <h1>ℹ️ About the Project & Academic Scope</h1>
+      <p class="hero-subtitle">Project documentation, dataset provenance, technology stack, and formal demarcation between implemented techniques and future research scope.</p>
+
+      <div class="section-header">
+        <span class="section-number">1</span>
+        <h2 class="mb-0">Project Metadata</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Academic Context</div>
+          <div class="card-subtitle">Coursework & Research Scope</div>
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <tbody>
+                <tr><td style="color:var(--text-muted); width:35%;"><b>Project Title:</b></td><td>MovieLens 1M — Mining Movie Genre & Rating Patterns</td></tr>
+                <tr><td style="color:var(--text-muted);"><b>Course / Subject:</b></td><td>Data Mining Techniques (DMT)</td></tr>
+                <tr><td style="color:var(--text-muted);"><b>Source Dataset:</b></td><td>GroupLens Research, University of Minnesota</td></tr>
+                <tr><td style="color:var(--text-muted);"><b>Collection Year:</b></td><td>2000 (1,000,209 ratings across 6,040 users)</td></tr>
+                <tr><td style="color:var(--text-muted);"><b>Presentation:</b></td><td>Static HTML / CSS / JavaScript Portfolio</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Technology Stack</div>
+          <div class="card-subtitle">Libraries & Computing Frameworks</div>
+          <div class="flex-wrap gap-1 mt-1">
+            <span class="badge">Python</span>
+            <span class="badge">Pandas</span>
+            <span class="badge">NumPy</span>
+            <span class="badge">Plotly</span>
+            <span class="badge">Scikit-learn</span>
+            <span class="badge">MLxtend (Apriori)</span>
+            <span class="badge">StandardScaler</span>
+            <span class="badge">PCA Decomposition</span>
+            <span class="badge">HTML5 / CSS3 / JS</span>
+            <span class="badge">Plotly.js</span>
+          </div>
+          <div style="font-size:0.85rem; line-height:1.6; margin-top:14px; color:var(--text-body);">
+            Analysis was performed in Python (DMT.ipynb). Results were extracted into JSON files and visualized using a standalone HTML/CSS/JavaScript frontend with Plotly.js for interactive charting.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">2</span>
+        <h2 class="mb-0">Formal Scope Boundary</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card scope-card">
+          <div class="scope-header implemented">✅ Implemented Techniques (Active in DMT.ipynb)</div>
+          <div class="card-subtitle">Verified empirical implementations with reproducible code</div>
+          <ul style="font-size:0.875rem; line-height:1.8; padding-left:20px;">
+            <li><b>Data Loading & Parsing:</b> Custom parsing of <code>::</code> delimited files with Latin-1 character set handling.</li>
+            <li><b>Demographic Feature Mapping:</b> Discretization of age keys into 7 analytical cohorts and occupation code mapping.</li>
+            <li><b>Multi-Label Genre Explosion:</b> Vectorized parsing of pipe-separated multi-genre labels into atomic entities.</li>
+            <li><b>Univariate & Bivariate EDA:</b> Rating frequency distributions, skewness analysis, 5-star ratio analysis, and genre benchmarks.</li>
+            <li><b>Combinatorial Genre Pair Mining:</b> Pairwise co-occurrence counting and rating under statistical constraints (≥500 ratings).</li>
+            <li><b>Association Rule Mining:</b> Apriori algorithm on movie genre incidence matrix with Support, Confidence, and Lift.</li>
+            <li><b>Dimensionality Reduction:</b> 6,040 × 18 User-Genre rating matrix, Z-score standardization, and 2-component PCA.</li>
+            <li><b>Demographic Cross-Tabulation:</b> Heatmaps and top-K genre volume ranking across age groups.</li>
+          </ul>
+        </div>
+        <div class="card scope-card future">
+          <div class="scope-header future">🚀 Future Scope (Unimplemented Research Ideas)</div>
+          <div class="card-subtitle">Prospective extensions for advanced recommendation systems</div>
+          <ul style="font-size:0.875rem; line-height:1.8; padding-left:20px;">
+            <li><b>User-User & Item-Item Collaborative Filtering:</b> Cosine/Pearson similarities to predict missing ratings.</li>
+            <li><b>Matrix Factorization (SVD / NMF):</b> Latent factor modeling using truncated Singular Value Decomposition.</li>
+            <li><b>Neural Collaborative Filtering (NCF):</b> Deep learning architectures combining embeddings with MLPs.</li>
+            <li><b>Sequential & Temporal Modeling:</b> Incorporating timestamps to capture how genre tastes evolve over time.</li>
+            <li><b>Content-Based Vector Embeddings:</b> Movie plot summaries and cast metadata via NLP transformers.</li>
+            <li><b>Hybrid Recommender System:</b> Blending collaborative factorization with genre-association rules for cold-start challenges.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <span class="section-number">3</span>
+        <h2 class="mb-0">Dataset Limitations & Academic Citation</h2>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">Dataset Limitations</div>
+          <div class="card-subtitle">Important contextual factors for interpreting findings</div>
+          <ul style="font-size:0.875rem; line-height:1.7; padding-left:20px;">
+            <li><b>Historical Snapshot:</b> Data collected in 2000 reflecting late-1990s viewing habits and internet access patterns.</li>
+            <li><b>Self-Selection Bias:</b> Users voluntarily choose which movies to rate, creating positive skewness (mean 3.58).</li>
+            <li><b>Self-Reported Demographics:</b> Age, Gender, Occupation provided voluntarily without verification.</li>
+            <li><b>Discrete Scale:</b> Ratings are whole stars from 1 to 5, without half-star increments or textual reviews.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">Academic Citation</div>
+          <div class="card-subtitle">Official GroupLens reference</div>
+          <div style="font-size:0.825rem; line-height:1.6; background:var(--bg-callout); padding:14px; border-radius:8px; font-family:'JetBrains Mono', monospace;">
+            F. Maxwell Harper and Joseph A. Konstan. 2015.<br>
+            <em>The MovieLens Datasets: History and Context.</em><br>
+            ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19.<br>
+            DOI: 10.1145/2827872
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="data/data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
